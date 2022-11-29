@@ -49,6 +49,7 @@ func meta(cmd *cobra.Command, fileName string) {
     tb := getColumns(pr)
 
     table.WriteHorizontal(writer, ht)
+    fmt.Fprint(writer, "\n")
     table.Write(writer, tb)
 
     pr.ReadStop()
