@@ -3,7 +3,7 @@ package table
 import (
     "fmt"
     "io"
-	"text/tabwriter"
+    "text/tabwriter"
 )
 
 type Table struct {
