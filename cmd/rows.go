@@ -10,28 +10,40 @@ import (
 	"github.com/xitongsys/parquet-go/reader"
 )
 
+var limit int
+var offset int64
+
 var rowsCommand = &cobra.Command{
     Use:    "rows",
     Short:  "Prints the rows contained in the parquet file",
     Run:    func(cmd *cobra.Command, args []string) {
-        rows(args[0])
+        rows(cmd, args[0], limit, offset)
     },
 }
 
 func init() {
+    rowsCommand.Flags().IntVarP(&limit, "limit", "l", 10, "The maximum number of rows to return")
+    rowsCommand.Flags().Int64VarP(&offset, "offset", "o", 0, "The offset from the first row")
+
     rootCmd.AddCommand(rowsCommand)
 }
 
-func getRowTable(pr *reader.ParquetReader) *table.Table {
-    num := 10
+func getRowTable(pr *reader.ParquetReader, limit int, offset int64) (*table.Table, error) {
+    columns := []string{}
 
-    res, err := pr.ReadByNumber(num)
+    for _, schemaElement := range pr.Footer.Schema {
+        columns = append(columns, schemaElement.GetName())
+    }
+
+    err := pr.SkipRows(offset)
+    res, err := pr.ReadByNumber(limit)
 
     if err != nil {
         fmt.Println("Error reading rows of parquet file", err)
     }
 
     tb := new(table.Table)
+    tb.Header = columns
 
     for _, row := range res {
         var data map[string]interface{}
@@ -40,27 +52,28 @@ func getRowTable(pr *reader.ParquetReader) *table.Table {
 
         if err != nil {
             fmt.Println("Error Marshaling data", err)
+            return nil, err
         }
 
         err = json.Unmarshal(b, &data)
 
         if err != nil {
             fmt.Println("Error unmarshaling data", err)
+            return nil, err
         }
 
         entries := []string{}
-
-        for key := range data {
-            entries = append(entries, key)
+        for _, column := range columns {
+            entries = append(entries, fmt.Sprint(data[column]))
         }
 
         tb.Rows = append(tb.Rows, entries)
     }
 
-    return tb
+    return tb, nil
 }
 
-func rows(fileName string) {
+func rows(cmd *cobra.Command, fileName string, limit int, offset int64) {
     fr, err := local.NewLocalFileReader(fileName)
 
     if err != nil {
@@ -75,24 +88,16 @@ func rows(fileName string) {
         return
     }
 
-    num := 10
-    
-    res, err := pr.ReadByNumber(num)
+    tb, err := getRowTable(pr, limit, offset)
 
     if err != nil {
-        fmt.Println("Error reading rows of parquet file", err)
+        fmt.Println("Error generating row table", err)
+        return
     }
 
-    for _, x := range res {
-        var data map[string]interface{}
+    writer := cmd.OutOrStdout()
+    table.Write(writer, tb)
 
-        b, err := json.Marshal(x)
-        err = json.Unmarshal(b, &data)
-
-        if err != nil {
-            return
-        }
-        fmt.Println(data)
-    }
-
+    pr.ReadStop()
+    fr.Close()
 }
