@@ -1,26 +1,21 @@
 package cmd
 
 import (
-	"fmt"
+    localreader "parquetcli/reader"
 	"parquetcli/table"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/reader"
 )
 
 func TestMeta_GetMetadata(t *testing.T) {
-    fr, err := local.NewLocalFileReader("../prices.parquet")
-
-    if err != nil {
-        fmt.Println("Can't open parquet file", err)
-        return;
+    footerInfo := localreader.Footer{
+        NumRows: 5792,
+        EncryptionAlgorithm: "Test Encryption Algorithm",
+        CreatedBy: "Test Program",
     }
 
-    pr, err := reader.NewParquetColumnReader(fr, 4)
-
-    ht := getMetadata(pr)
+    ht := ParseMetadata(&footerInfo)
 
     expected := new(table.HorizontalTable)
     expected.Entries = []table.Entry{
@@ -30,11 +25,11 @@ func TestMeta_GetMetadata(t *testing.T) {
         },
         table.Entry{
             Header: "EncryptionAlgorithm",
-            Value: "<nil>",
+            Value: "Test Encryption Algorithm",
         },
         table.Entry{
             Header: "CreatedBy",
-            Value: "fastparquet-python version 0.8.1 (build 0)",
+            Value: "Test Program",
         },
     }
 
@@ -42,16 +37,22 @@ func TestMeta_GetMetadata(t *testing.T) {
 }
 
 func TestMeta_GetColumns(t *testing.T) {
-    fr, err := local.NewLocalFileReader("../prices.parquet")
-
-    if err != nil {
-        fmt.Println("Can't open parquet file", err)
-        return;
+    footerInfo := localreader.Footer{
+        Columns: []localreader.Column{
+            localreader.Column{
+               Name: "Test Column 1", 
+               Type: "Test Type 1",
+               TypeLength: 11,
+            },
+            localreader.Column{
+                Name: "Test Column 2",
+                Type: "Test Type 2",
+                TypeLength: 22,
+            },
+        },
     }
-    
-    pr, err := reader.NewParquetColumnReader(fr, 4)
 
-    tb := getColumns(pr)
+    tb := ParseColumns(&footerInfo)
 
     expected := new(table.Table)
     expected.Header = []string{
@@ -62,39 +63,14 @@ func TestMeta_GetColumns(t *testing.T) {
 
     expected.Rows = [][]string{
         []string{
-            "Schema",
-            "BOOLEAN",
-            "0",
+            "Test Column 1",
+            "Test Type 1",
+            "11",
         },
         []string{
-            "Ticker",
-            "BYTE_ARRAY",
-            "0",
-        },
-        []string{
-            "Date",
-            "BYTE_ARRAY",
-            "0",
-        },
-        []string{
-            "Open",
-            "DOUBLE",
-            "64",
-        },
-        []string{
-            "High",
-            "DOUBLE",
-            "64",
-        },
-        []string{
-            "Low",
-            "DOUBLE",
-            "64",
-        },
-        []string{
-            "Close",
-            "DOUBLE",
-            "64",
+            "Test Column 2",
+            "Test Type 2",
+            "22",
         },
     }
 

@@ -5,17 +5,17 @@ import (
 	"strconv"
 
 	"parquetcli/table"
+    "parquetcli/reader"
 
 	"github.com/spf13/cobra"
-	"github.com/xitongsys/parquet-go-source/local"
-	"github.com/xitongsys/parquet-go/reader"
 )
 
 var metaCommand = &cobra.Command{
     Use:    "meta",
     Short:  "Print metadata related to the parquet file",
     Run:    func(cmd *cobra.Command, args []string) {
-        meta(cmd, args[0])
+        readerInstance := new(reader.ReaderImpl)
+        meta(cmd, readerInstance, args[0])
     },
 }
 
@@ -23,54 +23,39 @@ func init() {
     rootCmd.AddCommand(metaCommand)
 }
 
-func meta(cmd *cobra.Command, fileName string) {
-    fr, err := local.NewLocalFileReader(fileName)
+func meta(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName string) {
+    info, err := parquetReader.GetFooterInfo(fileName)
 
     if err != nil {
-        fmt.Println("Can't open parquet file", err)
-        return;
-    }
-
-    pr, err := reader.NewParquetColumnReader(fr, 4)
-
-    if err != nil {
-        fmt.Println("Can't create a parquet reader", err)
-    }
-
-    err = pr.ReadFooter()
-
-    if err != nil {
-        fmt.Println("Error reading footer of parquet file", err)
+        fmt.Println("Error reading parquet file footer", err)
+        return
     }
 
     writer := cmd.OutOrStdout()
 
-    ht := getMetadata(pr)
-    tb := getColumns(pr)
+    ht := ParseMetadata(info)
+    tb := ParseColumns(info)
 
     table.WriteHorizontal(writer, ht)
     fmt.Fprint(writer, "\n")
     table.Write(writer, tb)
-
-    pr.ReadStop()
-    fr.Close()
 }
 
-func getMetadata(pr *reader.ParquetReader) *table.HorizontalTable {
+func ParseMetadata(footer *reader.Footer) *table.HorizontalTable {
     ht := new(table.HorizontalTable)
 
     entries := []table.Entry{
         table.Entry{
             Header: "NumRows", 
-            Value: strconv.Itoa(int(pr.GetNumRows())),
+            Value: strconv.Itoa(footer.NumRows),
         },
         table.Entry{
             Header: "EncryptionAlgorithm",
-            Value: pr.Footer.GetEncryptionAlgorithm().String(),
+            Value: footer.EncryptionAlgorithm,
         },
         table.Entry{
             Header: "CreatedBy",
-            Value: pr.Footer.GetCreatedBy(),
+            Value: footer.CreatedBy,
         },
     }
 
@@ -78,15 +63,15 @@ func getMetadata(pr *reader.ParquetReader) *table.HorizontalTable {
     return ht
 }
 
-func getColumns(pr *reader.ParquetReader) *table.Table {
+func ParseColumns(footer *reader.Footer) *table.Table {
     tb := new(table.Table) 
     tb.Header = []string{"Name", "Type", "Type Length"}
 
-    for _, schemaElement := range pr.Footer.Schema {
+    for _, column := range footer.Columns {
         row := []string{
-            schemaElement.GetName(),
-            schemaElement.GetType().String(),
-            strconv.Itoa(int(schemaElement.GetTypeLength())),
+            column.Name,
+            column.Type,
+            strconv.Itoa(column.TypeLength),
         }
 
         tb.Rows = append(tb.Rows, row)
