@@ -1,7 +1,7 @@
 package cmd
 
 import (
-    localreader "parquetcli/reader"
+    "parquetcli/reader"
 	"parquetcli/table"
 	"testing"
 
@@ -9,7 +9,7 @@ import (
 )
 
 func TestMeta_GetMetadata(t *testing.T) {
-    footerInfo := localreader.Footer{
+    footerInfo := reader.Footer{
         NumRows: 5792,
         EncryptionAlgorithm: "Test Encryption Algorithm",
         CreatedBy: "Test Program",
@@ -37,14 +37,14 @@ func TestMeta_GetMetadata(t *testing.T) {
 }
 
 func TestMeta_GetColumns(t *testing.T) {
-    footerInfo := localreader.Footer{
-        Columns: []localreader.Column{
-            localreader.Column{
+    footerInfo := reader.Footer{
+        Columns: []reader.Column{
+            reader.Column{
                Name: "Test Column 1", 
                Type: "Test Type 1",
                TypeLength: 11,
             },
-            localreader.Column{
+            reader.Column{
                 Name: "Test Column 2",
                 Type: "Test Type 2",
                 TypeLength: 22,
