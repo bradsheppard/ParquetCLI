@@ -1,10 +1,9 @@
 package main
 
 import (
-    "parquetcli/cmd"
+	"parquetcli/cmd"
 )
 
 func main() {
-    cmd.Execute()
+	cmd.Execute()
 }
-

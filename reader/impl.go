@@ -1,105 +1,105 @@
 package reader
 
 import (
-    "fmt"
 	"encoding/json"
-    
+	"fmt"
+
 	"github.com/xitongsys/parquet-go-source/local"
 	"github.com/xitongsys/parquet-go/reader"
 )
 
-type ReaderImpl struct {}
+type ReaderImpl struct{}
 
 func (r *ReaderImpl) GetFooterInfo(file string) (*Footer, error) {
-    fr, err := local.NewLocalFileReader(file)
+	fr, err := local.NewLocalFileReader(file)
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    pr, err := reader.NewParquetColumnReader(fr, 4)
+	pr, err := reader.NewParquetColumnReader(fr, 4)
 
-    err = pr.ReadFooter()
+	err = pr.ReadFooter()
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    numRows := pr.Footer.GetNumRows()
-    encryptionAlgorithm := pr.Footer.GetEncryptionAlgorithm().String()
-    createdBy := pr.Footer.GetCreatedBy()
+	numRows := pr.Footer.GetNumRows()
+	encryptionAlgorithm := pr.Footer.GetEncryptionAlgorithm().String()
+	createdBy := pr.Footer.GetCreatedBy()
 
-    columns := []Column{}
+	columns := []Column{}
 
-    for _, schemaElement := range pr.Footer.Schema {
-        column := Column{
-            Name: schemaElement.GetName(),
-            Type: schemaElement.GetType().String(),
-            TypeLength: int(schemaElement.GetTypeLength()),
-        }
+	for _, schemaElement := range pr.Footer.Schema {
+		column := Column{
+			Name:       schemaElement.GetName(),
+			Type:       schemaElement.GetType().String(),
+			TypeLength: int(schemaElement.GetTypeLength()),
+		}
 
-        columns = append(columns, column)
-    }
+		columns = append(columns, column)
+	}
 
-    return &Footer{
-        NumRows: int(numRows),
-        Columns: columns,
-        EncryptionAlgorithm: encryptionAlgorithm,
-        CreatedBy: createdBy,
-    }, nil
+	return &Footer{
+		NumRows:             int(numRows),
+		Columns:             columns,
+		EncryptionAlgorithm: encryptionAlgorithm,
+		CreatedBy:           createdBy,
+	}, nil
 }
 
 func (r *ReaderImpl) GetRows(file string, limit int, offset int) (*RowInfo, error) {
-    fr, err := local.NewLocalFileReader(file)
+	fr, err := local.NewLocalFileReader(file)
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    pr, err := reader.NewParquetReader(fr, nil, 4)
+	pr, err := reader.NewParquetReader(fr, nil, 4)
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    info := new(RowInfo)
+	info := new(RowInfo)
 
-    for _, schemaElement := range pr.Footer.Schema {
-        info.Headers = append(info.Headers, schemaElement.GetName())
-    }
+	for _, schemaElement := range pr.Footer.Schema {
+		info.Headers = append(info.Headers, schemaElement.GetName())
+	}
 
-    err = pr.SkipRows(int64(offset))
+	err = pr.SkipRows(int64(offset))
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    res, err := pr.ReadByNumber(limit)
+	res, err := pr.ReadByNumber(limit)
 
-    for _, row := range res {
-        var data map[string]interface{}
+	for _, row := range res {
+		var data map[string]interface{}
 
-        b, err := json.Marshal(row)
+		b, err := json.Marshal(row)
 
-        if err != nil {
-            fmt.Println("Error Marshaling data", err)
-            return nil, err
-        }
+		if err != nil {
+			fmt.Println("Error Marshaling data", err)
+			return nil, err
+		}
 
-        err = json.Unmarshal(b, &data)
+		err = json.Unmarshal(b, &data)
 
-        if err != nil {
-            fmt.Println("Error unmarshaling data", err)
-            return nil, err
-        }
+		if err != nil {
+			fmt.Println("Error unmarshaling data", err)
+			return nil, err
+		}
 
-        entries := []string{}
-        for _, column := range info.Headers {
-            entries = append(entries, fmt.Sprint(data[column]))
-        }
+		entries := []string{}
+		for _, column := range info.Headers {
+			entries = append(entries, fmt.Sprint(data[column]))
+		}
 
-        info.Rows = append(info.Rows, entries)
-    }
+		info.Rows = append(info.Rows, entries)
+	}
 
-    return info, nil
+	return info, nil
 }
