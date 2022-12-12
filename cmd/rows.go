@@ -10,7 +10,7 @@ import (
 )
 
 var limit int
-var offset int64
+var offset int
 
 var rowsCommand = &cobra.Command{
     Use:    "rows",
@@ -23,13 +23,13 @@ var rowsCommand = &cobra.Command{
 
 func init() {
     rowsCommand.Flags().IntVarP(&limit, "limit", "l", 10, "The maximum number of rows to return")
-    rowsCommand.Flags().Int64VarP(&offset, "offset", "o", 0, "The offset from the first row")
+    rowsCommand.Flags().IntVarP(&offset, "offset", "o", 0, "The offset from the first row")
 
     rootCmd.AddCommand(rowsCommand)
 }
 
-func rows(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName string, limit int, offset int64) {
-    rows, err := parquetReader.GetRows(fileName, limit, int(offset))
+func rows(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName string, limit int, offset int) {
+    rows, err := parquetReader.GetRows(fileName, limit, offset)
 
     if err != nil {
         fmt.Println("Error parsing rows", err)
