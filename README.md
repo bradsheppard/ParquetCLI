@@ -11,7 +11,7 @@ Command line tool for reading Apache Parquet files. Supports:
   - Author
   - Column formats
 
-##Usage
+## Usage
 <table>
   <tr>
     <td><code>parquetcli meta</code></td><td>Prints metadata about the parquet file</td>
