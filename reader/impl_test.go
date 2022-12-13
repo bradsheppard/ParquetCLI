@@ -16,39 +16,39 @@ func TestGetFooterInfo(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected_info := &Footer{
-		Columns: []Column{
-			Column{
+	expected_info := &MetaData{
+		Columns: []*Column{
+			&Column{
 				Name:       "schema",
 				Type:       "BOOLEAN",
 				TypeLength: 0,
 			},
-			Column{
+			&Column{
 				Name:       "ticker",
 				Type:       "BYTE_ARRAY",
 				TypeLength: 0,
 			},
-			Column{
+			&Column{
 				Name:       "date",
 				Type:       "BYTE_ARRAY",
 				TypeLength: 0,
 			},
-			Column{
+			&Column{
 				Name:       "open",
 				Type:       "DOUBLE",
 				TypeLength: 64,
 			},
-			Column{
+			&Column{
 				Name:       "high",
 				Type:       "DOUBLE",
 				TypeLength: 64,
 			},
-			Column{
+			&Column{
 				Name:       "low",
 				Type:       "DOUBLE",
 				TypeLength: 64,
 			},
-			Column{
+			&Column{
 				Name:       "close",
 				Type:       "DOUBLE",
 				TypeLength: 64,
@@ -113,7 +113,7 @@ func TestGetRowsWithOffset(t *testing.T) {
 		t.Error(err)
 	}
 
-	expected_rows := &RowInfo{
+	expectedRows := &RowInfo{
 		Headers: []string{
 			"Schema",
 			"Ticker",
@@ -145,5 +145,24 @@ func TestGetRowsWithOffset(t *testing.T) {
 		},
 	}
 
-	assert.Equal(t, expected_rows, rows)
+	assert.Equal(t, expectedRows, rows)
+}
+
+func TestGetRowGroups(t *testing.T) {
+	reader := ReaderImpl{}
+	rowGroups, err := reader.GetRowGroups(file, 2, 0)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	expectedRowGroups := []*RowGroup{
+		&RowGroup{
+			NumRows:       5792,
+			TotalByteSize: 307197,
+			ColumnChunks:  []*ColumnChunk{},
+		},
+	}
+
+	assert.Equal(t, expectedRowGroups, rowGroups)
 }

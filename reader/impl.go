@@ -10,7 +10,7 @@ import (
 
 type ReaderImpl struct{}
 
-func (r *ReaderImpl) GetFooterInfo(file string) (*Footer, error) {
+func (r *ReaderImpl) GetFooterInfo(file string) (*MetaData, error) {
 	fr, err := local.NewLocalFileReader(file)
 
 	if err != nil {
@@ -29,7 +29,7 @@ func (r *ReaderImpl) GetFooterInfo(file string) (*Footer, error) {
 	encryptionAlgorithm := pr.Footer.GetEncryptionAlgorithm().String()
 	createdBy := pr.Footer.GetCreatedBy()
 
-	columns := []Column{}
+	columns := []*Column{}
 
 	for _, schemaElement := range pr.Footer.Schema {
 		column := Column{
@@ -38,10 +38,10 @@ func (r *ReaderImpl) GetFooterInfo(file string) (*Footer, error) {
 			TypeLength: int(schemaElement.GetTypeLength()),
 		}
 
-		columns = append(columns, column)
+		columns = append(columns, &column)
 	}
 
-	return &Footer{
+	return &MetaData{
 		NumRows:             int(numRows),
 		Columns:             columns,
 		EncryptionAlgorithm: encryptionAlgorithm,
@@ -102,4 +102,35 @@ func (r *ReaderImpl) GetRows(file string, limit int, offset int) (*RowInfo, erro
 	}
 
 	return info, nil
+}
+
+func (r *ReaderImpl) GetRowGroups(file string, limit int, offset int) ([]*RowGroup, error) {
+	fr, err := local.NewLocalFileReader(file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pr, err := reader.NewParquetColumnReader(fr, 4)
+
+	err = pr.ReadFooter()
+
+	if err != nil {
+		return nil, err
+	}
+
+	result := []*RowGroup{}
+	rowGroups := pr.Footer.GetRowGroups()
+
+	for _, rowGroup := range rowGroups {
+		mappedResult := &RowGroup{
+			NumRows:       int(rowGroup.NumRows),
+			TotalByteSize: int(rowGroup.TotalByteSize),
+			ColumnChunks:  []*ColumnChunk{},
+		}
+
+		result = append(result, mappedResult)
+	}
+
+	return result, nil
 }

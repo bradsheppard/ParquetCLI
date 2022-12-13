@@ -36,16 +36,16 @@ func rows(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName s
 		return
 	}
 
-	tb, err := ParseRows(rows)
+	tb := ParseRows(rows)
 
 	writer := cmd.OutOrStdout()
 	table.Write(writer, tb)
 }
 
-func ParseRows(rows *reader.RowInfo) (*table.Table, error) {
+func ParseRows(rows *reader.RowInfo) *table.Table {
 	tb := new(table.Table)
 	tb.Header = rows.Headers
 	tb.Rows = rows.Rows
 
-	return tb, nil
+	return tb
 }

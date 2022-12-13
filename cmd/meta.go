@@ -41,7 +41,7 @@ func meta(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName s
 	table.Write(writer, tb)
 }
 
-func ParseMetadata(footer *reader.Footer) *table.HorizontalTable {
+func ParseMetadata(footer *reader.MetaData) *table.HorizontalTable {
 	ht := new(table.HorizontalTable)
 
 	entries := []table.Entry{
@@ -63,7 +63,7 @@ func ParseMetadata(footer *reader.Footer) *table.HorizontalTable {
 	return ht
 }
 
-func ParseColumns(footer *reader.Footer) *table.Table {
+func ParseColumns(footer *reader.MetaData) *table.Table {
 	tb := new(table.Table)
 	tb.Header = []string{"Name", "Type", "Type Length"}
 

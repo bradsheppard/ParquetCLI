@@ -9,7 +9,7 @@ import (
 )
 
 func TestMeta_GetMetadata(t *testing.T) {
-	footerInfo := reader.Footer{
+	footerInfo := reader.MetaData{
 		NumRows:             5792,
 		EncryptionAlgorithm: "Test Encryption Algorithm",
 		CreatedBy:           "Test Program",
@@ -37,7 +37,7 @@ func TestMeta_GetMetadata(t *testing.T) {
 }
 
 func TestMeta_GetColumns(t *testing.T) {
-	footerInfo := reader.Footer{
+	footerInfo := reader.MetaData{
 		Columns: []reader.Column{
 			reader.Column{
 				Name:       "Test Column 1",
