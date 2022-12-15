@@ -129,6 +129,21 @@ func (r *ReaderImpl) GetRowGroups(file string, limit int, offset int) ([]*RowGro
 			ColumnChunks:  []*ColumnChunk{},
 		}
 
+                for _, columnChunk := range rowGroup.GetColumns() {
+                        mappedColumnChunk := ColumnChunk{
+                                FileOffset: int(columnChunk.GetFileOffset()),
+                                FilePath: columnChunk.GetFilePath(),
+                                ColumnMetaData: &ColumnMetaData{
+                                        PathInSchema: columnChunk.GetMetaData().GetPathInSchema(),
+                                        NumValues: int(columnChunk.GetMetaData().GetNumValues()),
+                                        DataPageOffset: int(columnChunk.GetMetaData().GetDataPageOffset()),
+                                        IndexPageOffset: int(columnChunk.GetMetaData().GetIndexPageOffset()),
+                                },
+                        }
+
+                        mappedResult.ColumnChunks = append(mappedResult.ColumnChunks, &mappedColumnChunk)
+                }
+
 		result = append(result, mappedResult)
 	}
 
