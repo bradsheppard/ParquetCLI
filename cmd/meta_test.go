@@ -38,13 +38,13 @@ func TestMeta_GetMetadata(t *testing.T) {
 
 func TestMeta_GetColumns(t *testing.T) {
 	footerInfo := reader.MetaData{
-		Columns: []reader.Column{
-			reader.Column{
+		Columns: []*reader.Column{
+			&reader.Column{
 				Name:       "Test Column 1",
 				Type:       "Test Type 1",
 				TypeLength: 11,
 			},
-			reader.Column{
+			&reader.Column{
 				Name:       "Test Column 2",
 				Type:       "Test Type 2",
 				TypeLength: 22,

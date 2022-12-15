@@ -26,11 +26,7 @@ func TestParseRows(t *testing.T) {
 		},
 	}
 
-	tb, err := ParseRows(&rows)
-
-	if err != nil {
-		t.Error(err)
-	}
+	tb := ParseRows(&rows)
 
 	expected := new(table.Table)
 	expected.Header = []string{

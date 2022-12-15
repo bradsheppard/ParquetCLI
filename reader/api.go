@@ -31,10 +31,11 @@ type ColumnChunk struct {
 }
 
 type ColumnMetaData struct {
-	PathInSchema    []string
-	NumValues       int
-	DataPageOffset  int
-	IndexPageOffset int
+	PathInSchema     []string
+	NumValues        int
+	DataPageOffset   int
+	IndexPageOffset  int
+	KeyValueMetadata []string
 }
 
 type ParquetFileReader interface {
