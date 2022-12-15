@@ -160,74 +160,74 @@ func TestGetRowGroups(t *testing.T) {
 		&RowGroup{
 			NumRows:       5792,
 			TotalByteSize: 307197,
-			ColumnChunks:  []*ColumnChunk{
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 1953,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"ticker"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 4,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 24962,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"date"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 1953,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 49209,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"open"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 24962,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 74218,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"high"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 49209,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 99349,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"low"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 74218,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                                &ColumnChunk{
-                                        FilePath: "",
-                                        FileOffset: 123903,
-                                        ColumnMetaData: &ColumnMetaData{
-                                                PathInSchema: []string{"close"},
-                                                NumValues: 5792,
-                                                DataPageOffset: 99349,
-                                                IndexPageOffset: 0,
-                                                KeyValueMetadata: nil,
-                                        },
-                                },
-                        },
+			ColumnChunks: []*ColumnChunk{
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 1953,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"ticker"},
+						NumValues:        5792,
+						DataPageOffset:   4,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 24962,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"date"},
+						NumValues:        5792,
+						DataPageOffset:   1953,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 49209,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"open"},
+						NumValues:        5792,
+						DataPageOffset:   24962,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 74218,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"high"},
+						NumValues:        5792,
+						DataPageOffset:   49209,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 99349,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"low"},
+						NumValues:        5792,
+						DataPageOffset:   74218,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+				&ColumnChunk{
+					FilePath:   "",
+					FileOffset: 123903,
+					ColumnMetaData: &ColumnMetaData{
+						PathInSchema:     []string{"close"},
+						NumValues:        5792,
+						DataPageOffset:   99349,
+						IndexPageOffset:  0,
+						KeyValueMetadata: nil,
+					},
+				},
+			},
 		},
 	}
 
