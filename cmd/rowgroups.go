@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"parquetcli/reader"
 	"parquetcli/table"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -21,6 +22,11 @@ func init() {
 	rootCmd.AddCommand(rowgroupsCommand)
 }
 
+type RowGroupInfo struct {
+	Header       *table.HorizontalTable
+	ColumnChunks *table.Table
+}
+
 func rowgroups(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileName string) {
 	rowGroups, err := parquetReader.GetRowGroups(fileName, 3, 0)
 
@@ -29,29 +35,63 @@ func rowgroups(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileN
 		return
 	}
 
-	tb := ParseRowGroups(rowGroups)
-
+	infos := ParseRowGroups(rowGroups)
 	writer := cmd.OutOrStdout()
-	table.Write(writer, tb)
+
+	for _, info := range infos {
+		table.WriteHorizontal(writer, info.Header)
+		fmt.Println()
+		table.Write(writer, info.ColumnChunks)
+		fmt.Println()
+	}
 }
 
-func ParseRowGroups(rowGroups []*reader.RowGroup) *table.Table {
-	tb := new(table.Table)
-	tb.Header = []string{
-		"Index",
-		"Total Byte Size",
-		"Num Rows",
-	}
+func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
+	infos := []*RowGroupInfo{}
 
 	for i, rowGroup := range rowGroups {
-		row := []string{
-			fmt.Sprint(i),
-			fmt.Sprint(rowGroup.TotalByteSize),
-			fmt.Sprint(rowGroup.NumRows),
+		tb := new(table.HorizontalTable)
+		info := new(RowGroupInfo)
+
+		tb.Entries = []table.Entry{
+			table.Entry{
+				Header: "Number",
+				Value:  fmt.Sprint(i),
+			},
+			table.Entry{
+				Header: "Total Byte Size",
+				Value:  fmt.Sprint(rowGroup.TotalByteSize),
+			},
+			table.Entry{
+				Header: "Num Rows",
+				Value:  fmt.Sprint(rowGroup.NumRows),
+			},
 		}
 
-		tb.Rows = append(tb.Rows, row)
+		colTb := new(table.Table)
+		colTb.Header = []string{
+			"Index",
+			"File Path",
+			"File Offset",
+			"Path In Schema",
+		}
+
+		for j, columnChunk := range rowGroup.ColumnChunks {
+			row := []string{
+				fmt.Sprint(j),
+				columnChunk.FilePath,
+				fmt.Sprint(columnChunk.FileOffset),
+				strings.Join(columnChunk.ColumnMetaData.PathInSchema, "/"),
+			}
+
+			colTb.Rows = append(colTb.Rows, row)
+		}
+
+		info.Header = tb
+		info.ColumnChunks = colTb
+
+		infos = append(infos, info)
 	}
 
-	return tb
+	return infos
 }

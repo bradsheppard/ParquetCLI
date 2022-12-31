@@ -10,7 +10,23 @@ import (
 
 type ReaderImpl struct{}
 
-func (r *ReaderImpl) GetFooterInfo(file string) (*MetaData, error) {
+func initializeReader(file string) (*reader.ParquetReader, error) {
+	fr, err := local.NewLocalFileReader(file)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pr, err := reader.NewParquetReader(fr, nil, 4)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pr, nil
+}
+
+func initializeColumnReader(file string) (*reader.ParquetReader, error) {
 	fr, err := local.NewLocalFileReader(file)
 
 	if err != nil {
@@ -18,6 +34,20 @@ func (r *ReaderImpl) GetFooterInfo(file string) (*MetaData, error) {
 	}
 
 	pr, err := reader.NewParquetColumnReader(fr, 4)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return pr, nil
+}
+
+func (r *ReaderImpl) GetFooterInfo(file string) (*MetaData, error) {
+	pr, err := initializeColumnReader(file)
+
+	if err != nil {
+		return nil, err
+	}
 
 	err = pr.ReadFooter()
 
@@ -50,13 +80,7 @@ func (r *ReaderImpl) GetFooterInfo(file string) (*MetaData, error) {
 }
 
 func (r *ReaderImpl) GetRows(file string, limit int, offset int) (*RowInfo, error) {
-	fr, err := local.NewLocalFileReader(file)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pr, err := reader.NewParquetReader(fr, nil, 4)
+	pr, err := initializeReader(file)
 
 	if err != nil {
 		return nil, err
@@ -82,14 +106,12 @@ func (r *ReaderImpl) GetRows(file string, limit int, offset int) (*RowInfo, erro
 		b, err := json.Marshal(row)
 
 		if err != nil {
-			fmt.Println("Error Marshaling data", err)
 			return nil, err
 		}
 
 		err = json.Unmarshal(b, &data)
 
 		if err != nil {
-			fmt.Println("Error unmarshaling data", err)
 			return nil, err
 		}
 
@@ -105,13 +127,7 @@ func (r *ReaderImpl) GetRows(file string, limit int, offset int) (*RowInfo, erro
 }
 
 func (r *ReaderImpl) GetRowGroups(file string, limit int, offset int) ([]*RowGroup, error) {
-	fr, err := local.NewLocalFileReader(file)
-
-	if err != nil {
-		return nil, err
-	}
-
-	pr, err := reader.NewParquetColumnReader(fr, 4)
+	pr, err := initializeColumnReader(file)
 
 	err = pr.ReadFooter()
 
