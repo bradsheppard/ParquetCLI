@@ -150,6 +150,7 @@ func (r *ReaderImpl) GetRowGroups(file string, limit int, offset int) ([]*RowGro
 				FileOffset: int(columnChunk.GetFileOffset()),
 				FilePath:   columnChunk.GetFilePath(),
 				ColumnMetaData: &ColumnMetaData{
+					Type:            Type(columnChunk.MetaData.Type),
 					PathInSchema:    columnChunk.GetMetaData().GetPathInSchema(),
 					NumValues:       int(columnChunk.GetMetaData().GetNumValues()),
 					DataPageOffset:  int(columnChunk.GetMetaData().GetDataPageOffset()),

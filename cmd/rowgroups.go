@@ -55,7 +55,7 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 
 		tb.Entries = []table.Entry{
 			table.Entry{
-				Header: "Number",
+				Header: "Row Group Index",
 				Value:  fmt.Sprint(i),
 			},
 			table.Entry{
@@ -70,18 +70,20 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 
 		colTb := new(table.Table)
 		colTb.Header = []string{
-			"Index",
+			"Type",
 			"File Path",
 			"File Offset",
 			"Path In Schema",
+			"Num Values",
 		}
 
-		for j, columnChunk := range rowGroup.ColumnChunks {
+		for _, columnChunk := range rowGroup.ColumnChunks {
 			row := []string{
-				fmt.Sprint(j),
+				columnChunk.ColumnMetaData.Type.String(),
 				columnChunk.FilePath,
 				fmt.Sprint(columnChunk.FileOffset),
 				strings.Join(columnChunk.ColumnMetaData.PathInSchema, "/"),
+				fmt.Sprint(columnChunk.ColumnMetaData.NumValues),
 			}
 
 			colTb.Rows = append(colTb.Rows, row)

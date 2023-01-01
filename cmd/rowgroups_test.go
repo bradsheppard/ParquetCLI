@@ -19,6 +19,7 @@ func TestParseRowGroups(t *testing.T) {
 					FileOffset: 1,
 					ColumnMetaData: &reader.ColumnMetaData{
 						PathInSchema: []string{"Path1Part1", "Path1Part2"},
+						NumValues:    11,
 					},
 				},
 			},
@@ -32,6 +33,7 @@ func TestParseRowGroups(t *testing.T) {
 					FileOffset: 2,
 					ColumnMetaData: &reader.ColumnMetaData{
 						PathInSchema: []string{"Path2Part1", "Path2Part2"},
+						NumValues:    22,
 					},
 				},
 			},
@@ -48,7 +50,7 @@ func TestParseRowGroups(t *testing.T) {
 	expectedRowGroup1.Header = &table.HorizontalTable{
 		Entries: []table.Entry{
 			table.Entry{
-				Header: "Number",
+				Header: "Row Group Index",
 				Value:  "0",
 			},
 			table.Entry{
@@ -63,24 +65,26 @@ func TestParseRowGroups(t *testing.T) {
 	}
 	expectedRowGroup1.ColumnChunks = &table.Table{}
 	expectedRowGroup1.ColumnChunks.Header = []string{
-		"Index",
+		"Type",
 		"File Path",
 		"File Offset",
 		"Path In Schema",
+		"Num Values",
 	}
 	expectedRowGroup1.ColumnChunks.Rows = [][]string{
 		[]string{
-			"0",
+			"BOOLEAN",
 			"Path 1",
 			"1",
 			"Path1Part1/Path1Part2",
+			"11",
 		},
 	}
 
 	expectedRowGroup2.Header = &table.HorizontalTable{
 		Entries: []table.Entry{
 			table.Entry{
-				Header: "Number",
+				Header: "Row Group Index",
 				Value:  "1",
 			},
 			table.Entry{
@@ -95,17 +99,19 @@ func TestParseRowGroups(t *testing.T) {
 	}
 	expectedRowGroup2.ColumnChunks = &table.Table{}
 	expectedRowGroup2.ColumnChunks.Header = []string{
-		"Index",
+		"Type",
 		"File Path",
 		"File Offset",
 		"Path In Schema",
+		"Num Values",
 	}
 	expectedRowGroup2.ColumnChunks.Rows = [][]string{
 		[]string{
-			"0",
+			"BOOLEAN",
 			"Path 2",
 			"2",
 			"Path2Part1/Path2Part2",
+			"22",
 		},
 	}
 

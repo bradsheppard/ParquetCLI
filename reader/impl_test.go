@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var file = "../prices.parquet"
+var file = "../mocks/prices.parquet"
 
 func TestGetFooterInfo(t *testing.T) {
 	reader := ReaderImpl{}
@@ -165,6 +165,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 1953,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             6,
 						PathInSchema:     []string{"ticker"},
 						NumValues:        5792,
 						DataPageOffset:   4,
@@ -176,6 +177,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 24962,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             6,
 						PathInSchema:     []string{"date"},
 						NumValues:        5792,
 						DataPageOffset:   1953,
@@ -187,6 +189,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 49209,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             5,
 						PathInSchema:     []string{"open"},
 						NumValues:        5792,
 						DataPageOffset:   24962,
@@ -198,6 +201,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 74218,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             5,
 						PathInSchema:     []string{"high"},
 						NumValues:        5792,
 						DataPageOffset:   49209,
@@ -209,6 +213,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 99349,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             5,
 						PathInSchema:     []string{"low"},
 						NumValues:        5792,
 						DataPageOffset:   74218,
@@ -220,6 +225,7 @@ func TestGetRowGroups(t *testing.T) {
 					FilePath:   "",
 					FileOffset: 123903,
 					ColumnMetaData: &ColumnMetaData{
+						Type:             5,
 						PathInSchema:     []string{"close"},
 						NumValues:        5792,
 						DataPageOffset:   99349,
