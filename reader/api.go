@@ -71,7 +71,7 @@ func (p Type) String() string {
 	case FIXED_LENGTH_BYTE_ARRAY:
 		return "FIXED_LEN_BYTE_ARRAY"
 	}
-	return "<UNSET>"
+	return "UNKNOWN"
 }
 
 type ParquetFileReader interface {
