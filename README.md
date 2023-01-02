@@ -19,4 +19,7 @@ Command line tool for reading Apache Parquet files. Supports:
   <tr>
     <td><code>parquetcli rows</code></td><td>Prints row information about the parquet file</td>
   </tr>
+  <tr>
+    <td><code>parquetcli rowgroups</code></td><td>Prints information related to row groups and column chunks</td>
+  </tr>
 </table>

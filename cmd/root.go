@@ -5,7 +5,7 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "Parquet CLI",
+	Use:   "parquetcli",
 	Short: "Parquet CLI for reading parquet files",
 }
 
