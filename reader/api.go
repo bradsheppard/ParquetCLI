@@ -37,9 +37,11 @@ type ColumnMetaData struct {
 	DataPageOffset   int
 	IndexPageOffset  int
 	KeyValueMetadata []string
+	CompressionCodec CompressionCodec
 }
 
 type Type int64
+type CompressionCodec int64
 
 const (
 	BOOLEAN                 Type = 0
@@ -52,8 +54,15 @@ const (
 	FIXED_LENGTH_BYTE_ARRAY Type = 7
 )
 
-func (p Type) String() string {
-	switch p {
+const (
+	UNCOMPRESSED CompressionCodec = 0
+	SNAPPY       CompressionCodec = 1
+	GZIP         CompressionCodec = 2
+	LZO          CompressionCodec = 3
+)
+
+func (t Type) String() string {
+	switch t {
 	case BOOLEAN:
 		return "BOOLEAN"
 	case INT32:
@@ -70,6 +79,20 @@ func (p Type) String() string {
 		return "BYTE_ARRAY"
 	case FIXED_LENGTH_BYTE_ARRAY:
 		return "FIXED_LEN_BYTE_ARRAY"
+	}
+	return "UNKNOWN"
+}
+
+func (c CompressionCodec) String() string {
+	switch c {
+	case UNCOMPRESSED:
+		return "UNCOMPRESSED"
+	case SNAPPY:
+		return "SNAPPY"
+	case GZIP:
+		return "GZIP"
+	case LZO:
+		return "LZO"
 	}
 	return "UNKNOWN"
 }
