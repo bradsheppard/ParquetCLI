@@ -21,6 +21,7 @@ func TestParseRowGroups(t *testing.T) {
 						PathInSchema:     []string{"Path1Part1", "Path1Part2"},
 						NumValues:        11,
 						CompressionCodec: reader.GZIP,
+						DataPageOffset:   10,
 					},
 				},
 			},
@@ -36,6 +37,7 @@ func TestParseRowGroups(t *testing.T) {
 						PathInSchema:     []string{"Path2Part1", "Path2Part2"},
 						NumValues:        22,
 						CompressionCodec: reader.GZIP,
+						DataPageOffset:   10,
 					},
 				},
 			},
@@ -73,6 +75,7 @@ func TestParseRowGroups(t *testing.T) {
 		"Path In Schema",
 		"Num Values",
 		"Compression Codec",
+		"Data Page Offset",
 	}
 	expectedRowGroup1.ColumnChunks.Rows = [][]string{
 		[]string{
@@ -82,6 +85,7 @@ func TestParseRowGroups(t *testing.T) {
 			"Path1Part1/Path1Part2",
 			"11",
 			"GZIP",
+			"10",
 		},
 	}
 
@@ -109,6 +113,7 @@ func TestParseRowGroups(t *testing.T) {
 		"Path In Schema",
 		"Num Values",
 		"Compression Codec",
+		"Data Page Offset",
 	}
 	expectedRowGroup2.ColumnChunks.Rows = [][]string{
 		[]string{
@@ -118,6 +123,7 @@ func TestParseRowGroups(t *testing.T) {
 			"Path2Part1/Path2Part2",
 			"22",
 			"GZIP",
+			"10",
 		},
 	}
 

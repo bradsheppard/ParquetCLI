@@ -76,6 +76,7 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 			"Path In Schema",
 			"Num Values",
 			"Compression Codec",
+			"Data Page Offset",
 		}
 
 		for _, columnChunk := range rowGroup.ColumnChunks {
@@ -86,6 +87,7 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 				strings.Join(columnChunk.ColumnMetaData.PathInSchema, "/"),
 				fmt.Sprint(columnChunk.ColumnMetaData.NumValues),
 				columnChunk.ColumnMetaData.CompressionCodec.String(),
+				fmt.Sprint(columnChunk.ColumnMetaData.DataPageOffset),
 			}
 
 			colTb.Rows = append(colTb.Rows, row)
