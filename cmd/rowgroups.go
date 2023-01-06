@@ -41,7 +41,7 @@ func rowgroups(cmd *cobra.Command, parquetReader reader.ParquetFileReader, fileN
 	for _, info := range infos {
 		table.WriteHorizontal(writer, info.Header)
 		fmt.Println()
-		table.Write(writer, info.ColumnChunks)
+		table.WriteWithSpacing(writer, info.ColumnChunks, 16, 4, 4)
 		fmt.Println()
 	}
 }
@@ -77,6 +77,7 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 			"Num Values",
 			"Compression Codec",
 			"Data Page Offset",
+			"Index Page Offset",
 		}
 
 		for _, columnChunk := range rowGroup.ColumnChunks {
@@ -88,6 +89,7 @@ func ParseRowGroups(rowGroups []*reader.RowGroup) []*RowGroupInfo {
 				fmt.Sprint(columnChunk.ColumnMetaData.NumValues),
 				columnChunk.ColumnMetaData.CompressionCodec.String(),
 				fmt.Sprint(columnChunk.ColumnMetaData.DataPageOffset),
+				fmt.Sprint(columnChunk.ColumnMetaData.IndexPageOffset),
 			}
 
 			colTb.Rows = append(colTb.Rows, row)

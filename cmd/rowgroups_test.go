@@ -22,6 +22,7 @@ func TestParseRowGroups(t *testing.T) {
 						NumValues:        11,
 						CompressionCodec: reader.GZIP,
 						DataPageOffset:   10,
+						IndexPageOffset:  11,
 					},
 				},
 			},
@@ -38,6 +39,7 @@ func TestParseRowGroups(t *testing.T) {
 						NumValues:        22,
 						CompressionCodec: reader.GZIP,
 						DataPageOffset:   10,
+						IndexPageOffset:  11,
 					},
 				},
 			},
@@ -76,6 +78,7 @@ func TestParseRowGroups(t *testing.T) {
 		"Num Values",
 		"Compression Codec",
 		"Data Page Offset",
+		"Index Page Offset",
 	}
 	expectedRowGroup1.ColumnChunks.Rows = [][]string{
 		[]string{
@@ -86,6 +89,7 @@ func TestParseRowGroups(t *testing.T) {
 			"11",
 			"GZIP",
 			"10",
+			"11",
 		},
 	}
 
@@ -114,6 +118,7 @@ func TestParseRowGroups(t *testing.T) {
 		"Num Values",
 		"Compression Codec",
 		"Data Page Offset",
+		"Index Page Offset",
 	}
 	expectedRowGroup2.ColumnChunks.Rows = [][]string{
 		[]string{
@@ -124,6 +129,7 @@ func TestParseRowGroups(t *testing.T) {
 			"22",
 			"GZIP",
 			"10",
+			"11",
 		},
 	}
 

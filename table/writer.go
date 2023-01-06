@@ -22,7 +22,15 @@ type Entry struct {
 
 func Write(writer io.Writer, table *Table) {
 	w := tabwriter.NewWriter(writer, 25, 8, 1, ' ', 0)
+	doWrite(w, table)
+}
 
+func WriteWithSpacing(writer io.Writer, table *Table, minwidth int, tabwidth int, padding int) {
+	w := tabwriter.NewWriter(writer, minwidth, tabwidth, padding, ' ', 0)
+	doWrite(w, table)
+}
+
+func doWrite(w *tabwriter.Writer, table *Table) {
 	for _, column := range table.Header {
 		fmt.Fprint(w, column)
 		fmt.Fprint(w, "\t")
